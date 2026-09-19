@@ -1,6 +1,8 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
+document.documentElement.classList.remove("no-js");
+
 const hamburger = $("#hamburger");
 const navLinks = $("#navLinks");
 hamburger &&
@@ -68,11 +70,14 @@ revealEls.forEach((el) => observer.observe(el));
 (function counters() {
   const nums = $$(".num");
   if (!nums.length) return;
+  const done = new WeakSet();
   const obs = new IntersectionObserver(
     (entries, o) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           nums.forEach((n) => {
+            if (done.has(n)) return;
+            done.add(n);
             const target = parseInt(n.dataset.target || "0", 10);
             let current = 0;
             const step = Math.max(1, Math.floor(target / 90));
@@ -90,15 +95,24 @@ revealEls.forEach((el) => observer.observe(el));
     },
     { threshold: 0.4 }
   );
-  const profile = document.querySelector(".card");
+  const profile = document.querySelector(".stat-row");
   if (profile) obs.observe(profile);
 })();
 
-(function netlifyForm() {
+(function contactForm() {
   const form = $("#contactForm");
   const msg = $("#formMsg");
   const btn = $("#submitBtn");
   if (!form) return;
+
+  function mailtoFallback(data) {
+    const addr = "adam@example.com";
+    const sub = encodeURIComponent(data.get("subject") || "Portfolio Contact");
+    const body = encodeURIComponent(
+      `Name: ${data.get("name")}\nEmail: ${data.get("email")}\n\n${data.get("message")}`
+    );
+    window.location.href = `mailto:${addr}?subject=${sub}&body=${body}`;
+  }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -107,38 +121,41 @@ revealEls.forEach((el) => observer.observe(el));
     msg.textContent = "";
 
     const data = new FormData(form);
-    fetch(form.getAttribute("action") || "/", {
-      method: "POST",
-      headers: { Accept: "application/json" },
-      body: data,
-    })
-      .then((res) => {
-        if (res.ok) {
+    const userId = form.getAttribute("data-emailjs-user");
+    const serviceId = form.getAttribute("data-emailjs-service");
+    const templateId = form.getAttribute("data-emailjs-template");
+
+    if (userId && serviceId && templateId && typeof emailjs !== "undefined") {
+      emailjs
+        .sendForm(serviceId, templateId, form, userId)
+        .then(() => {
           msg.style.color = "#8fe39a";
           msg.textContent = "Message sent — thank you!";
           form.reset();
-        } else {
-          return res.text().then((text) => {
-            throw new Error(text || "Network error");
-          });
-        }
-      })
-      .catch((err) => {
-        msg.style.color = "#ff9b9b";
-        msg.textContent =
-          "Oops — unable to send. Try again or email me directly.";
-        console.error("Form error", err);
-      })
-      .finally(() => {
-        btn.disabled = false;
-        btn.textContent = "Send message";
-      });
+        })
+        .catch(() => {
+          mailtoFallback(data);
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = "Send message";
+        });
+    } else {
+      mailtoFallback(data);
+      btn.disabled = false;
+      btn.textContent = "Send message";
+    }
   });
 })();
 
 window.addEventListener("keydown", (e) => {
   if (e.key === "Tab")
     document.documentElement.classList.add("show-focus");
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.key === "Tab")
+    document.documentElement.classList.remove("show-focus");
 });
 
 const yearEl = document.getElementById("year");

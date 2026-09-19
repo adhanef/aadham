@@ -396,6 +396,132 @@ section {
   }
 }
 
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(255, 152, 0, 0.18);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.hero-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-link-secondary {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.18s;
+}
+
+.hero-link-secondary:hover {
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.nav {
+  position: relative;
+}
+
+.section-grid {
+  margin-top: 18px;
+}
+
+.section-card {
+  margin-top: 18px;
+  padding: 20px;
+}
+
+.profile-name {
+  text-align: center;
+  margin: 6px 0;
+}
+
+.profile-subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin: 0;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.form-msg {
+  margin-left: 6px;
+}
+
+.contact-grid-item {
+  min-width: 260px;
+}
+
+@media (max-width: 980px) {
+  .contact-grid-item {
+    min-width: 0;
+  }
+}
+
+.brand .profile-subtitle {
+  font-size: 12px;
+}
+
+.form-card label {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.form-card label:first-of-type {
+  margin-top: 0;
+}
+
+.contact-socials {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.contact-title {
+  margin: 0 0 8px;
+}
+
+.contact-desc {
+  margin: 0 0 12px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.footer-note {
+  opacity: 0.9;
+  color: var(--muted);
+}
+
+@media (max-width: 980px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-card {
   background: var(--card);
   padding: 18px;
@@ -439,9 +565,19 @@ footer {
   transition: all 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
 .reveal.show {
   opacity: 1;
   transform: none;
+}
+
+.show-focus :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 @media (max-width: 520px) {
